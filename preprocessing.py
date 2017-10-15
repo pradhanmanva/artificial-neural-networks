@@ -32,5 +32,5 @@ if __name__ == "__main__":
     # print(raw_data)
     data = cleaning(raw_data)
     data = str_to_int(data)
-    print(data)
+    #print(data)
     data.to_csv('clean.csv', index=False, header=False)
