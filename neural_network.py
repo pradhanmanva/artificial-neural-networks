@@ -1,6 +1,5 @@
-import random
-
 import math
+import random
 
 
 def activation_function(x):
@@ -78,7 +77,7 @@ class Node:
            Assume self is not an input_node. If the error, last_output, and
            lastInput are None, then this node has already been updated.
         :param learning_rate:
-        :return:
+        :return: nothing
         '''
 
         if self.error is not None and self.last_output is not None and self.last_input is not None:
@@ -137,8 +136,12 @@ class bias_node(input_node):
 
 
 class Edge:
+    '''
+    The class Edge that connects the nodes to each other. Here the weights are randomly assigned to them.
+    '''
+
     def __init__(self, source, target):
-        self.weight = random.uniform(0, 1)  # assigning andom weight
+        self.weight = random.uniform(0, 1)  # assigning random weight
         self.source = source  # type:Node
         self.target = target  # type:Node
 
@@ -164,10 +167,22 @@ class Network:
             node.get_error(label)
 
     def update_weights(self, learning_rate):
+        '''
+        Update the weights of the input nodes
+        :param learning_rate: learning rate
+        :return: none
+        '''
         for node in self.input_node:
             node.update_weights(learning_rate)
 
     def train(self, labeled_examples, learning_rate=0.9, max_iterations=500):
+        '''
+        Used to train the labeled_examples on the network
+        :param labeled_examples: training data to be used on the network
+        :param learning_rate: learning rate at which the machine learns. If it is too low, the machine might take a long time to converge. If it is too small, the machine might never converge or might sk the point of convergence.
+        :param max_iterations: number of iterations
+        :return: none
+        '''
         while max_iterations > 0:
             for example, label in labeled_examples:
                 output = self.evaluate(example)
