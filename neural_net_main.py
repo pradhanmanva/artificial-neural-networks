@@ -32,7 +32,7 @@ def dummy_test(num_i, num_h):
                         ((1, 0, 1), 0),
                         ((1, 1, 0), 1),
                         ((1, 1, 1), 0)]
-    network.train(labeled_examples, max_iterations=5000)
+    network.train(labeled_examples, max_iterations=50)
 
     # test for consistency
     for number, isEven in labeled_examples:
@@ -50,12 +50,20 @@ def make_network(path, num_h, num_each_layer):
     network.output_node = output_node
     network.input_node.extend(input_nodes)
 
-    layers = [[Node() for _ in range(i) for i in range(num_each_layer)] for _ in range(num_h)]
+    layers = []
+    for nodes in num_each_layer:
+        layer = []
+        for i in range(nodes):
+            layer.append(Node())
+        layers.append(layer)
 
     # weights are all randomized
+    l = 1
     for inode in input_nodes:
-        for node in layers[0]:
-            Edge(inode, node)
+        print("Layer %d " % l)
+        for node_l in layers[0]:
+            Edge(inode, node_l)
+        l += 1
 
     for layer1, layer2 in [(layers[i], layers[i + 1]) for i in range(num_h - 1)]:
         for node1 in layer1:
@@ -68,12 +76,8 @@ def make_network(path, num_h, num_each_layer):
     return network
 
 
-def big_dataTest(path, percent, epoch, network, rate):
-    big_data = []
-    raw_data = change_csv(path)
-    for line in raw_data:
-        (exampleStr, classStr) = line.split(',')
-        big_data.append(([int(x) for x in exampleStr.split()], float(classStr)))
+def big_data_test(path, percent, epoch, network, rate):
+    big_data = change_csv('clean.csv')
 
     random.shuffle(big_data)
     df = pd.read_csv(path, header=None)
@@ -99,4 +103,4 @@ if __name__ == "__main__":
         i += 1
     learning_rate = 0.9
     network = make_network(output_path, hidden_layers, hidden_nodes)
-    big_dataTest(output_path, training_percent, iteration, network, learning_rate)
+    big_data_test(output_path, training_percent, iteration, network, learning_rate)
