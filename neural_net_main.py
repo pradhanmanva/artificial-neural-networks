@@ -58,14 +58,12 @@ def make_network(path, num_h, num_each_layer):
         layers.append(layer)
 
     # weights are all randomized
-    l = 1
     for inode in input_nodes:
-        print("Layer %d " % l)
         for node_l in layers[0]:
             Edge(inode, node_l)
-        l += 1
 
     for layer1, layer2 in [(layers[i], layers[i + 1]) for i in range(num_h - 1)]:
+        n = 0
         for node1 in layer1:
             for node2 in layer2:
                 Edge(node1, node2)
@@ -82,11 +80,20 @@ def big_data_test(path, percent, epoch, network, rate):
     random.shuffle(big_data)
     df = pd.read_csv(path, header=None)
     rows = int(len(df.index) * (percent / 100))
-    training_data, test_data = big_data[:rows:1], big_data
+    training_data, test_data = big_data[:rows:-1], big_data
 
+    errors = []
     network.train(training_data, rate, epoch)
-    errors = [abs(test_pt[-1] - round(network.evaluate(test_pt[0]))) for test_pt in test_data]
-    print("Average error: %.4f" % (sum(errors) * 1.0 / len(errors)))
+    for train_pt in training_data:
+        error = abs(train_pt[-1] - network.evaluate(train_pt[0]))
+        errors.append(error)
+    print("Training Average error: %.4f" % (sum(errors) * 1.0 / len(errors)))
+
+    errors = []
+    for test_pt in test_data:
+        error = abs(test_pt[-1] - network.evaluate(test_pt[0]))
+        errors.append(error)
+    print("Test Average error: %.4f" % (sum(errors) * 1.0 / len(errors)))
 
 
 if __name__ == "__main__":

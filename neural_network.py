@@ -144,7 +144,6 @@ class Edge:
         self.weight = random.uniform(0, 1)  # assigning random weight
         self.source = source  # type:Node
         self.target = target  # type:Node
-        print(" Weight : %.4f" % (self.weight))
 
         # attach the edges to its nodes
         source.outgoing_edges.append(self)
