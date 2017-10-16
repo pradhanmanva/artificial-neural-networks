@@ -1,3 +1,5 @@
+import sys
+
 import pandas as pd
 
 
@@ -23,7 +25,8 @@ def str_to_int(df):
 
 
 if __name__ == "__main__":
-    raw_data = pd.read_csv("adult.csv", skipinitialspace=True, index_col=False, na_values=['?'],
+    args = sys.argv
+    raw_data = pd.read_csv(args[1], skipinitialspace=True, index_col=False, na_values=['?'],
                            na_filter='?')
     '''col_no = []
     for index, rows in raw_data.iterrows():
@@ -32,5 +35,5 @@ if __name__ == "__main__":
     # print(raw_data)
     data = cleaning(raw_data)
     data = str_to_int(data)
-    #print(data)
-    data.to_csv('clean.csv', index=False, header=False)
+    # print(data)
+    data.to_csv(args[2], index=False, header=False)

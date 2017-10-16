@@ -1,13 +1,12 @@
-import random
+import sys
+
+import pandas as pd
 
 from neural_network import *
+from reader import *
 
 
-def get_data_from_csv():
-    pass
-
-
-def test(num_i, num_h):
+def dummy_test(num_i, num_h):
     network = Network()
     input_nodes = [input_node(i) for i in range(num_i)]
     hidden_nodes = [Node() for i in range(num_h)]
@@ -41,14 +40,17 @@ def test(num_i, num_h):
             number, isEven - network.evaluate(number), network.evaluate(number)))
 
 
-def make_network(num_i, num_h, num_each_layer):
+def make_network(path, num_h, num_each_layer):
+    df = pd.read_csv(path, header=None)
+    num_i = len(df.columns)
+
     network = Network()
     input_nodes = [input_node(i) for i in range(num_i)]
     output_node = Node()
     network.output_node = output_node
     network.input_node.extend(input_nodes)
 
-    layers = [[Node() for _ in range(num_each_layer)] for _ in range(num_h)]
+    layers = [[Node() for _ in range(i) for i in range(num_each_layer)] for _ in range(num_h)]
 
     # weights are all randomized
     for inode in input_nodes:
@@ -66,24 +68,35 @@ def make_network(num_i, num_h, num_each_layer):
     return network
 
 
-def big_dataTest():
-    network = make_network(2, 2, 15)
-
+def big_dataTest(path, percent, epoch, network, rate):
     big_data = []
-
-    with open('clean.csv', 'r') as dataFile:
-        for line in dataFile:
-            (exampleStr, classStr) = line.split(',')
-            big_data.append(([int(x) for x in exampleStr.split()], float(classStr)))
+    raw_data = change_csv(path)
+    for line in raw_data:
+        (exampleStr, classStr) = line.split(',')
+        big_data.append(([int(x) for x in exampleStr.split()], float(classStr)))
 
     random.shuffle(big_data)
-    trainingData, testData = big_data[:-500], big_data[-500:]
+    df = pd.read_csv(path, header=None)
+    rows = int(len(df.index) * (percent / 100))
+    training_data, test_data = big_data[:rows:1], big_data
 
-    network.train(trainingData, learning_rate=0.5, max_iterations=10000)
-    errors = [abs(testPt[-1] - round(network.evaluate(testPt[0]))) for testPt in testData]
+    network.train(training_data, rate, epoch)
+    errors = [abs(test_pt[-1] - round(network.evaluate(test_pt[0]))) for test_pt in test_data]
     print("Average error: %.4f" % (sum(errors) * 1.0 / len(errors)))
 
 
 if __name__ == "__main__":
-    test(2, 4)
-    big_dataTest()
+    # dummy_test(2, 4)
+    cmd_line = sys.argv
+    output_path = cmd_line[1]
+    training_percent = int(cmd_line[2])
+    iteration = int(cmd_line[3])
+    hidden_layers = int(cmd_line[4])
+    i = 5
+    hidden_nodes = []
+    while i < len(cmd_line):
+        hidden_nodes.append(int(cmd_line[i]))
+        i += 1
+    learning_rate = 0.9
+    network = make_network(output_path, hidden_layers, hidden_nodes)
+    big_dataTest(output_path, training_percent, iteration, network, learning_rate)

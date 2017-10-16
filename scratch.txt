@@ -1,0 +1,6 @@
+ds1 80 200 2 4 2
+
+The above would imply that the dataset is ds1, the percent of the dataset to be used for
+training is 80%, the maximum number of iterations is 200, and there are 2 hidden layers with
+(4, 2) neurons. Your program would have to initialize the weights randomly. Remember to take
+care of the bias term (w0) also.
