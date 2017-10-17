@@ -166,6 +166,9 @@ class Network:
         for node in self.input_node:
             node.get_error(label)
 
+    def return_weights(self):
+        return random.uniform(0,1)
+
     def update_weights(self, learning_rate):
         '''
         Update the weights of the input nodes
