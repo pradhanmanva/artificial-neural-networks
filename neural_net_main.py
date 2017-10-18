@@ -96,7 +96,7 @@ def big_data_test(path, percent, epoch, network, rate):
     print("Test Average error: %.4f" % (sum(errors) * 1.0 / len(errors)))
 
 
-def print_network(path, network, hidden_layers):
+'''def print_network(path, network, hidden_layers):
     df = pd.read_csv(path, header=None)
     num_i = len(df.columns)
 
@@ -119,7 +119,7 @@ def print_network(path, network, hidden_layers):
             for k in range(j+1):
                 print(" %.5f " % network.return_weights(), end=" ")
             num_hnodes += 1
-        num_layers += 1
+        num_layers += 1'''
 
 if __name__ == "__main__":
     # dummy_test(2, 4)
@@ -135,5 +135,5 @@ if __name__ == "__main__":
         i += 1
     learning_rate = 0.9
     network = make_network(output_path, hidden_layers, hidden_nodes)
-    print_network(output_path, network, hidden_layers)
+    #print_network(output_path, network, hidden_layers)
     big_data_test(output_path, training_percent, iteration, network, learning_rate)
